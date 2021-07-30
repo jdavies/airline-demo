@@ -4,3 +4,4 @@ database/ticket.csv
 database/flight_by_id.csv
 python/__pycache__/*.pyc
 
+react/.env
