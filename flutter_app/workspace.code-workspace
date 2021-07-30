@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "flutter_app",
+			"path": "."
+		},
+		{
+			"name": "assets",
+			"path": "../../da_elevation/kcorp_app/assets"
+		}
+	],
+	"settings": {}
+}
