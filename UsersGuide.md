@@ -48,15 +48,20 @@ The tickets.csv and baggage.csv files are too large to use the Load Data functio
 
 **Pro-Tip** Add the dsbulk's bin/ directory to your path so you can run it from anywhere.
 
-Assuming that DSBulk is in your path, chaneg to the ```database/``` directory run the following command to load the ticket.csv file:
+Assuming that DSBulk is in your path, change to the ```database/``` directory run the following command to load the ticket.csv file:
 
 ```sh
 dsbulk load -url export.csv -k airline -t ticket -b "path/to/secure-connect-database_name.zip" -u client_id -p client_secret -header true
 ```
 
-Obviously, you will need to modify the path to your **secure-connect** ZIP file, **client_id** and **client_secret** with the correct values for your database.
+Obviously, you will need to modify the path to your **secure-connect** ZIP file, **client_id** and **client_secret** with the correct values for your database. I find it easier to export the client id and client secret as environent variables using a command like:
 
-On my machine I use the following command:
+```sh
+export ASTRA_CLIENT_ID="THIS_IS_YOUR_CLIENT_ID"
+export ASTRA_CLIENT_SECRET="THIS_IS_YOUR_CLIENT_SECRET"
+```
+
+It is important to enclose them in the quotations. On my machine I use the following command:
 
 ```sh
 dsbulk load -url ticket.csv -k airline -t ticket -b "../python/secure-connect-airline-demo.zip" -u $ASTRA_CLIENT_ID -p $ASTRA_CLIENT_SECRET -header true
@@ -74,11 +79,11 @@ This will also take 7 - 10 minutes to execute. Its loading approximately 4 milli
 
 ## Running the Client
 
-TBD
+Run the flutter app from the code editor or directly on the simulator if you've already loaded it onto a device.
 
 ## Demo Steps
 
-TBD
+Just start at the top of the client and login, buy a ticket, etc. Just start at the top and work your way  down.
 
 ## Internationalization
 
