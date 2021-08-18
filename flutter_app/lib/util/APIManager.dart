@@ -290,33 +290,34 @@ class APIManager {
       final jsonResponse = json.decode(response.body);
       if (jsonResponse != null) {
         // Ok, lets create the baggage records
-        url = _baseURL +
-            '/api/rest/v2/keyspaces/' +
-            Credentials.ASTRA_DB_KEYSPACE +
-            '/baggage';
-        var uuid = Uuid();
-        for (int x = 0; x < numBags; x++) {
-          Baggage bag = Baggage();
-          bag.id = uuid.v4();
-          bag.carousel = appState.ticket!.carousel;
-          bag.destination_city = appState.ticket!.destination_city;
-          bag.flight_id = appState.ticket!.flight_id;
-          bag.image = ""; // Unused for now
-          bag.origin_city = appState.ticket!.origin_city;
-          bag.passenger_id = appState.ticket!.passenger_id;
-          bag.passenger_name = appState.ticket!.passenger_name;
-          bag.ticket_id = appState.ticket!.id;
-          print("Creating baggage record id = " + bag.id);
-          print("on carousel " + bag.carousel.toString());
-          // POST the bag to create the record.
-          final bagResponse = await http.post(Uri.parse(url),
-              headers: {
-                'accept': 'application/json',
-                'X-Cassandra-Token': Credentials.APP_TOKEN
-              },
-              body: jsonEncode(bag.toJson()));
-          print("Bag status code = " + bagResponse.statusCode.toString());
-        }
+        // url = _baseURL +
+        //     '/api/rest/v2/keyspaces/' +
+        //     Credentials.ASTRA_DB_KEYSPACE +
+        //     '/baggage';
+        // var uuid = Uuid();
+        // for (int x = 0; x < numBags; x++) {
+        //   Baggage bag = Baggage();
+        //   bag.id = uuid.v4();
+        //   bag.carousel = appState.ticket!.carousel;
+        //   bag.destination_city = appState.ticket!.destination_city;
+        //   bag.flight_id = appState.ticket!.flight_id;
+        //   bag.image = ""; // Unused for now
+        //   bag.origin_city = appState.ticket!.origin_city;
+        //   bag.passenger_id = appState.ticket!.passenger_id;
+        //   bag.passenger_name = appState.ticket!.passenger_name;
+        //   bag.ticket_id = appState.ticket!.id;
+        //   print("Creating baggage record id = " + bag.id);
+        //   print("on carousel " + bag.carousel.toString());
+        //   // POST the bag to create the record.
+        //   final bagResponse = await http.post(Uri.parse(url),
+        //       headers: {
+        //         'accept': 'application/json',
+        //         'X-Cassandra-Token': Credentials.APP_TOKEN
+        //       },
+        //       body: jsonEncode(bag.toJson()));
+        //   print("Bag status code = " + bagResponse.statusCode.toString());
+        // }
+        createBaggageRecords(ticket, numBags);
       } else {
         // Error on the GET request
         // print(response.body);
@@ -324,6 +325,71 @@ class APIManager {
     }
     return true;
   }
+
+  // Create the baggage records for the ticket.
+  static Future<bool> createBaggageRecords(Ticket ticket, int numBags) async {
+    AppState appState = AppState();
+    String url = _baseURL +
+        '/api/rest/v2/keyspaces/' +
+        Credentials.ASTRA_DB_KEYSPACE +
+        '/baggage';
+    var uuid = Uuid();
+    for (int x = 0; x < numBags; x++) {
+      Baggage bag = Baggage();
+      bag.id = uuid.v4();
+      bag.carousel = appState.ticket!.carousel;
+      bag.destination_city = appState.ticket!.destination_city;
+      bag.flight_id = appState.ticket!.flight_id;
+      bag.image = ""; // Unused for now
+      bag.origin_city = appState.ticket!.origin_city;
+      bag.passenger_id = appState.ticket!.passenger_id;
+      bag.passenger_name = appState.ticket!.passenger_name;
+      bag.ticket_id = appState.ticket!.id;
+      print("Creating baggage record id = " + bag.id);
+      print("on carousel " + bag.carousel.toString());
+      // POST the bag to create the record.
+      final bagResponse = await http.post(Uri.parse(url),
+          headers: {
+            'accept': 'application/json',
+            'X-Cassandra-Token': Credentials.APP_TOKEN
+          },
+          body: jsonEncode(bag.toJson()));
+      print("Bag status code = " + bagResponse.statusCode.toString());
+    }
+    return true;
+  }
+
+  // DOCUMENT-API
+  // static Future<bool> addFlightToDocument(Ticket ticket, int numBags) async {
+  //   AppState appState = AppState();
+
+  //   // First we need to read the flight_history/domestic array into memory.
+  //   String url = _baseURL +
+  //       '/api/rest/v2/namespaces/' +
+  //       Credentials.ASTRA_DB_KEYSPACE +
+  //       '/collections/customer/' +
+  //       ticket.passenger_id +
+  //       '/flight_history/domestic';
+  //   print('GET ' + url);
+  //   final response = await http.get(Uri.parse(url), headers: {
+  //     'accept': 'application/json',
+  //     'X-Cassandra-Token': Credentials.APP_TOKEN
+  //   });
+  //   if (response.statusCode == 200) {
+  //     // Success, Read in the JSON response
+  //     final jsonResponse = json.decode(response.body);
+  //     if (jsonResponse != null) {
+  //       // int count = jsonResponse['count'] as int;
+  //       final List<dynamic> returnedArray = jsonResponse['data'] as List;
+
+  //       for (final flight in returnedArray) {
+  //         flightList.add(Flight.fromJson(flight));
+  //       }
+  //   } else {
+
+  //   }
+  //   return true;
+  // }
 
   /// Get a list of cities that our airline flies to/from
   static Future<List<Baggage>> getBaggageList(String passenger_id) async {

@@ -1,0 +1,45 @@
+{
+    "id": "33330000-1111-1111-1111-000011110000",
+    "club_id": 12355,
+    "club_membership" : "100K",
+    "club_joined": "2012-04-23T18:25:43.511Z",
+    "club_expiration": "2021-10-23T18:25:43.511Z",
+    "contact" : {
+        "cell_phone": "+1 555-555-5555",
+        "work_phone": "+1 555-555-5555",
+        "email" : ["demo@datastax.com", "john2159@somebiz.com"],
+        "opt_in" : true,
+        "home_address" : "100 Main St, Palo Alto, CA 95005",
+        "work_address": "100 Main St, Palo Alto, CA 95005"
+    },
+    "club_checkins" : [
+        {"checkin_date": "2012-04-23T18:25:43.511Z"}
+    ],
+    "flight_history": {
+        "domestic" : [
+            {
+                "ticket" : "68780000-1111-1111-1111-000011110000",
+                "flight" : "ABC0214",
+                "bags_checked" : 2,
+                "miles_earned" : 1795,
+                "fight_date" : "2012-04-23T18:25:43.511Z"
+            },
+            {
+                "ticket" : "68780000-1111-1111-1111-000011110000",
+                "flight" : "ABC0216",
+                "bags_checked" : 1,
+                "miles_earned" : 803,
+                "fight_date" : "2015-12-23T07:25:43.511Z"
+            }
+        ],
+        "international" : [
+            {
+                "ticket" : "68780000-1111-1111-1111-000011110000",
+                "flight" : "ABC9203",
+                "bags_checked" : 2,
+                "miles_earned" : 3458,
+                "fight_date" : "2013-06-01T06:25:43.511Z"
+            }
+        ]
+    }
+}
