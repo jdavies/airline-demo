@@ -1,3 +1,5 @@
+import 'Ticket.dart';
+
 /// Flight.dart
 /// This class represents a single flight record in the flight_by_id or the
 /// flight_by_city tables
@@ -7,6 +9,14 @@ class FlightHistoryRecord {
   late String flight;
   late int miles_earned = 0;
   late String ticket; // UUID of  te ticket
+
+  FlightHistoryRecord.fromTicket(Ticket ticket) {
+    bags_checked = ticket.bags_checked;
+    flight_date = ticket.departure_time;
+    flight = ticket.flight_id;
+    miles_earned = ticket.miles_earned;
+    this.ticket = ticket.id;
+  }
 
   FlightHistoryRecord.fromJson(Map<String, dynamic> json) {
     bags_checked = json['bags_checked'] as int;

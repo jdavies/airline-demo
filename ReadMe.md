@@ -1,6 +1,6 @@
 # ReadMe.md
 
-These file are for the Airline Demo, created by Jeff Davies and Ranjit Gundarlahalli. The slide deck for hte lunch and learns is at <https://docs.google.com/presentation/d/1u-CjX_AuPDB94qZKvq4P1Gxiv9ElEuGJoohcJkKrs1k/edit#slide=id.ga57c3deb73_2_557>
+These file are for the Airline Demo, created by Jeff Davies and Ranjit Gundarlahalli. The slide deck for the lunch and learns is at <https://docs.google.com/presentation/d/1u-CjX_AuPDB94qZKvq4P1Gxiv9ElEuGJoohcJkKrs1k/edit#slide=id.ga57c3deb73_2_557>
 
 ## database/
 

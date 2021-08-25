@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:airline_demo/entities/Baggage.dart';
 import 'package:airline_demo/entities/Flight.dart';
+import 'package:airline_demo/entities/FlightHistoryList.dart';
+import 'package:airline_demo/entities/FlightHistoryRecord.dart';
 import 'package:airline_demo/entities/Ticket.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
@@ -214,6 +216,8 @@ class APIManager {
     ticket.carousel = flight.carousel;
     ticket.passenger_id = userID;
     ticket.passenger_name = name;
+    ticket.bags_checked = 0;
+    ticket.miles_earned = 500; // Hard coded for now
 
     // Now lets make a call to the REST API to write out this ticket
     String url = _baseURL +
@@ -228,7 +232,7 @@ class APIManager {
         },
         body: jsonEncode(ticket.toJson()));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // A successful response looks like the following:
       // {
       //   "id": "33330000-1111-1111-1111-000011110000"
@@ -263,6 +267,9 @@ class APIManager {
         AMPM;
     Map<String, dynamic> checkIn = <String, dynamic>{};
     checkIn["checkin_time"] = timeString;
+    checkIn["bags_checked"] = numBags;
+
+    ticket.bags_checked = numBags;
 
     // Now lets make a call to the REST API to write out this ticket
     String url = _baseURL +
@@ -289,35 +296,8 @@ class APIManager {
 
       final jsonResponse = json.decode(response.body);
       if (jsonResponse != null) {
-        // Ok, lets create the baggage records
-        // url = _baseURL +
-        //     '/api/rest/v2/keyspaces/' +
-        //     Credentials.ASTRA_DB_KEYSPACE +
-        //     '/baggage';
-        // var uuid = Uuid();
-        // for (int x = 0; x < numBags; x++) {
-        //   Baggage bag = Baggage();
-        //   bag.id = uuid.v4();
-        //   bag.carousel = appState.ticket!.carousel;
-        //   bag.destination_city = appState.ticket!.destination_city;
-        //   bag.flight_id = appState.ticket!.flight_id;
-        //   bag.image = ""; // Unused for now
-        //   bag.origin_city = appState.ticket!.origin_city;
-        //   bag.passenger_id = appState.ticket!.passenger_id;
-        //   bag.passenger_name = appState.ticket!.passenger_name;
-        //   bag.ticket_id = appState.ticket!.id;
-        //   print("Creating baggage record id = " + bag.id);
-        //   print("on carousel " + bag.carousel.toString());
-        //   // POST the bag to create the record.
-        //   final bagResponse = await http.post(Uri.parse(url),
-        //       headers: {
-        //         'accept': 'application/json',
-        //         'X-Cassandra-Token': Credentials.APP_TOKEN
-        //       },
-        //       body: jsonEncode(bag.toJson()));
-        //   print("Bag status code = " + bagResponse.statusCode.toString());
-        // }
         createBaggageRecords(ticket, numBags);
+        addFlightToDocument(ticket, numBags);
       } else {
         // Error on the GET request
         // print(response.body);
@@ -360,36 +340,122 @@ class APIManager {
   }
 
   // DOCUMENT-API
-  // static Future<bool> addFlightToDocument(Ticket ticket, int numBags) async {
-  //   AppState appState = AppState();
+  static Future<bool> addFlightToDocument(Ticket ticket, int numBags) async {
+    // AppState appState = AppState();
+    bool success = false; // Default to failure
 
-  //   // First we need to read the flight_history/domestic array into memory.
-  //   String url = _baseURL +
-  //       '/api/rest/v2/namespaces/' +
-  //       Credentials.ASTRA_DB_KEYSPACE +
-  //       '/collections/customer/' +
-  //       ticket.passenger_id +
-  //       '/flight_history/domestic';
-  //   print('GET ' + url);
-  //   final response = await http.get(Uri.parse(url), headers: {
-  //     'accept': 'application/json',
-  //     'X-Cassandra-Token': Credentials.APP_TOKEN
-  //   });
-  //   if (response.statusCode == 200) {
-  //     // Success, Read in the JSON response
-  //     final jsonResponse = json.decode(response.body);
-  //     if (jsonResponse != null) {
-  //       // int count = jsonResponse['count'] as int;
-  //       final List<dynamic> returnedArray = jsonResponse['data'] as List;
+    // First we need to read the flight_history/domestic array into memory.
+    String url = _baseURL +
+        '/api/rest/v2/namespaces/' +
+        Credentials.ASTRA_DB_KEYSPACE +
+        '/collections/customers/' +
+        ticket.passenger_id +
+        '/flight_history/domestic';
+    print('GET ' + url);
+    final response = await http.get(Uri.parse(url), headers: {
+      'accept': 'application/json',
+      'X-Cassandra-Token': Credentials.APP_TOKEN
+    });
+    if (response.statusCode == 200) {
+      // Success, Read in the JSON response
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse != null) {
+        // int count = jsonResponse['count'] as int;
+        final List<dynamic> returnedArray = jsonResponse['data'] as List;
 
-  //       for (final flight in returnedArray) {
-  //         flightList.add(Flight.fromJson(flight));
-  //       }
-  //   } else {
+        FlightHistoryList fhl = FlightHistoryList("domestic");
 
-  //   }
-  //   return true;
-  // }
+        // Add each flight to our history
+        for (final flight in returnedArray) {
+          fhl.addFlight(FlightHistoryRecord.fromJson(flight));
+        }
+
+        // Now add this flight to the list
+        FlightHistoryRecord fhr = FlightHistoryRecord.fromTicket(ticket);
+        fhl.addFlight(fhr);
+
+        Map<String, dynamic> jsonFlightList = fhl.toJson();
+
+        print(jsonEncode(jsonFlightList));
+
+        String url2 = _baseURL +
+            '/api/rest/v2/namespaces/' +
+            Credentials.ASTRA_DB_KEYSPACE +
+            '/collections/customers/' +
+            ticket.passenger_id +
+            '/flight_history';
+
+        print("PUT to " + url2);
+
+        // Write out the new collection of domestic flights
+        final response2 = await http.put(Uri.parse(url2),
+            headers: {
+              'accept': 'application/json',
+              'Content-Type': 'application/json',
+              'X-Cassandra-Token': Credentials.APP_TOKEN
+            },
+            body: jsonEncode(jsonFlightList));
+
+        final jsonResponse2 = json.decode(response2.body);
+        print("===========RESPONSE===========");
+        print(jsonResponse2); // For debugging only.
+        // A successful response returns the entire document:
+        // {
+        //   "documentId": "33330000-1111-1111-1111-000011110000",
+        //   "data": {
+        //       "club_checkins": [
+        //           {
+        //               "checkin_date": "2012-04-23T18:25:43.511Z"
+        //           }
+        //       ],
+        //       "club_expiration": "2021-10-23T18:25:43.511Z",
+        //       "club_id": 12355,
+        //       "club_joined": "2012-04-23T18:25:43.511Z",
+        //       "club_membership": "100K",
+        //       "contact": {
+        //           "cell_phone": "+1 555-555-5555",
+        //           "email": [
+        //               "demo@datastax.com",
+        //               "john2159@somebiz.com"
+        //           ],
+        //           "home_address": "100 Main St, Palo Alto, CA 95005",
+        //           "opt_in": true,
+        //           "work_address": "100 Main St, Palo Alto, CA 95005",
+        //           "work_phone": "+1 555-555-5555"
+        //       },
+        //       "flight_history": {
+        //           "domestic": {
+        //               "3": {
+        //                   "bags_checked": 2,
+        //                   "fight_date": "2021-04-23T18:25:43.511Z",
+        //                   "flight": "ABCXXXX",
+        //                   "miles_earned": 1795,
+        //                   "ticket": "68780000-1111-1111-1111-000011110000"
+        //               }
+        //           },
+        //           "international": [
+        //               {
+        //                   "bags_checked": 2,
+        //                   "fight_date": "2013-06-01T06:25:43.511Z",
+        //                   "flight": "ABC9203",
+        //                   "miles_earned": 3458,
+        //                   "ticket": "68780000-1111-1111-1111-000011110000"
+        //               }
+        //           ]
+        //       },
+        //       "id": "33330000-1111-1111-1111-000011110000"
+        //   }
+        // }
+        if (response.statusCode == 201) {
+          // Success!
+          success = true;
+        }
+      }
+    } else {
+      success = false;
+    }
+    return success;
+  }
 
   /// Get a list of cities that our airline flies to/from
   static Future<List<Baggage>> getBaggageList(String passenger_id) async {

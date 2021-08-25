@@ -85,6 +85,9 @@ Run the flutter app from the code editor or directly on the simulator if you've 
 
 Just start at the top of the client and login, buy a ticket, etc. Just start at the top and work your way  down.
 
+## Showing Data Changes in DS Studio
+
+TBD
 ## Internationalization
 
 The demo data is very US specific (ie US cities and states). If you want to alter the data to atch your customer's geography then you need to go to the ```python/generate.py``` file and modify the list of cities. See the ReadMe.md file in the ```python/``` directory for details on how to generate the csv files.

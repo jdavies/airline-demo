@@ -86,6 +86,8 @@ create table ticket(
     departure_gate text,
     checkin_time text,
     carousel text,
+    bags_checked int,
+    miles_earned int,
     PRIMARY KEY(id)
 );
 

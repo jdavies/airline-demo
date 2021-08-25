@@ -140,6 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: appState.isLoggedIn()
                         ? () async {
                             APIManager.resetData();
+                            appState.isCheckedIn = false;
+                            appState.hasFlown = false;
+                            appState.ticket = null;
                             Fluttertoast.showToast(
                                 msg: "Data reset!",
                                 toastLength: Toast.LENGTH_SHORT,

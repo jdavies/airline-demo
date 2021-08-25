@@ -75,9 +75,11 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
                               onChanged: (String? value) {
                                 setState(() {
                                   origin_city = value!;
+                                  if (destination_city != null) {
+                                    refreshFlightList(context, origin_city!,
+                                        destination_city!);
+                                  }
                                 });
-                                refreshFlightList(
-                                    context, origin_city!, destination_city!);
                               },
                             ),
                           ),

@@ -9,6 +9,8 @@ class Ticket {
   late String passenger_id;
   late String passenger_name;
   late String carousel;
+  int bags_checked = 0;
+  int miles_earned = 0;
 
   Ticket() {}
 
@@ -23,6 +25,17 @@ class Ticket {
     passenger_id = json['passenger_id'] as String;
     passenger_name = json['passenger_name'] as String;
     carousel = json['carousel'] as String;
+    if (json['bags_checked'] != null) {
+      bags_checked = json['bags_checked'] as int;
+    } else {
+      bags_checked = 0;
+    }
+
+    if (json['miles_earned'] != null) {
+      miles_earned = json['miles_earned'] as int;
+    } else {
+      miles_earned = 500;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -37,6 +50,8 @@ class Ticket {
     data['passenger_id'] = passenger_id;
     data['passenger_name'] = passenger_name;
     data['carousel'] = carousel;
+    data['bags_checked'] = bags_checked;
+    data['miles_earned'] = miles_earned;
     return data;
   }
 }

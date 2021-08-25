@@ -124,12 +124,14 @@ def create_all():
                                     passenger_id = uuid.uuid4()
                                     passenger_name = name_gen.random_name()
                                     checkin_time = ''
-                                    ticket = Ticket(ticket_id, passenger_id, passenger_name, flight_id, origin_city, destination_city, departure_time, departure_gate, checkin_time, carousel)
+                                    num_bags = random.randrange(0, 3, 1)
+                                    bags_checked = num_bags
+                                    miles_earned = 500
+                                    ticket = Ticket(ticket_id, passenger_id, passenger_name, flight_id, origin_city, destination_city, departure_time, departure_gate, checkin_time, carousel, bags_checked, miles_earned)
                                     ticket_file.write(ticket.as_csv())
                                     
                                     # Ok, are there any bags for this customer? Write out a random 
                                     # number of bags for each ticket from 0 to 3
-                                    num_bags = random.randrange(0, 3, 1)
                                     for bag in range(num_bags):
                                         if(num_bags > 0):
                                             baggage_id = uuid.uuid4()
