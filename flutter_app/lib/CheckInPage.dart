@@ -102,7 +102,7 @@ class _CheckInPageState extends State<CheckInPage> {
                       TextButton(
                           onPressed: () {
                             // Buy a ticket for the selected flight
-                            checkin(2);
+                            checkin(numBags);
                           },
                           child: Text("Check-In"))
                     ],
