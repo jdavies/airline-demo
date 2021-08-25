@@ -255,7 +255,7 @@ class APIManager {
   static Future<bool> checkIn(Ticket ticket, int numBags) async {
     // check in for this flight
     // Get the current time as a string
-    print("Checking in with " + numBags.toString());
+    print("Checking in with " + numBags.toString() + " bags");
     AppState appState = AppState();
     var now = DateTime.now();
     int hour = now.hour % 12;
