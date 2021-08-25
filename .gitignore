@@ -4,5 +4,5 @@ database/ticket.csv
 database/flight_by_id.csv
 database/setenv.sh
 python/__pycache__/*.pyc
-
+/database/*.json
 react/.env
