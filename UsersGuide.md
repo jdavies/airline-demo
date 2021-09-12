@@ -16,6 +16,12 @@ Once you are in the CQL Shell for the ```airline``` keyspace, you will need to l
 
 Open the contents of the ```database/create.cql``` file and copy and paste it into the CQL Shell window for your database (still in the Astra web UI).
 
+### Generate the CSV Files
+
+There are a number of CSV files that you need to generate before you can move onto the next step.
+Go into the ```python/``` subdirectory and execute the generate.py script. It will create the
+CSV files for you.
+
 ### Data Loading with the Astra UI
 
 You will load 2 of the tables into your database using the Load Data function built into the Astra web UI.
