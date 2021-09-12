@@ -44,6 +44,11 @@ insert into login(id, email, password, name) values (33330000-1111-1111-1111-000
 
 -- The flights table contains a list of all possible flights
 drop table if exists city;
+
+-- LEAVE THIS COMMENTED OUT
+-- ========================
+-- This table is automatically created when you import the city.csv file,
+-- as documented in the User's Guide
 -- create table city(
 --     name text,
 --     PRIMARY KEY(name)
@@ -51,6 +56,12 @@ drop table if exists city;
 
 -- The flights table contains a list of all possible flights
 drop table if exists flight_by_id;
+
+
+-- LEAVE THIS COMMENTED OUT
+-- ========================
+-- This table is automatically created when you import the flight_by_id.csv
+--file, as documented in the User's Guide
 -- create table flight_by_id(
 --     id text, -- This is the flight number. ex ABC0021
 --     origin_city text, -- The city where this flight begins
@@ -62,6 +73,12 @@ drop table if exists flight_by_id;
 
 -- The flights table contains a list of all possible flights
 drop table if exists flight_by_city;
+
+
+-- LEAVE THIS COMMENTED OUT
+-- ========================
+-- This table is automatically created when you import the flight_by_id.csv
+--file for the second time, as documented in the User's Guide
 -- create table flight_by_id(
 --     id text, -- This is the flight number. ex ABC0021
 --     origin_city text, -- The city where this flight begins
