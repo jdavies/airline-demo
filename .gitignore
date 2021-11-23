@@ -6,3 +6,4 @@ database/setenv.sh
 python/__pycache__/*.pyc
 /database/*.json
 react/.env
+.DS_Store
