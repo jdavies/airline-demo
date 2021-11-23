@@ -361,14 +361,18 @@ class APIManager {
       final jsonResponse = json.decode(response.body);
       if (jsonResponse != null) {
         // int count = jsonResponse['count'] as int;
-        final List<dynamic> returnedArray = jsonResponse['data'] as List;
+        final List<dynamic> returnedArray =
+            jsonResponse['data'] as List<dynamic>;
+
+        Map<String, dynamic> foo = returnedArray[0];
 
         FlightHistoryList fhl = FlightHistoryList("domestic");
 
+        // REDO!!!
         // Add each flight to our history
-        for (final flight in returnedArray) {
-          fhl.addFlight(FlightHistoryRecord.fromJson(flight));
-        }
+        // for (final flight in returnedArray) {
+        //   fhl.addFlight(FlightHistoryRecord.fromJson(flight));
+        // }
 
         // Now add this flight to the list
         FlightHistoryRecord fhr = FlightHistoryRecord.fromTicket(ticket);
